@@ -30,3 +30,22 @@ var req = https.get(youtubeXmlUrl, function(res) {
   });
 });
 ```
+
+## Data Structures
+### Subtitle
+```javascript
+{ 
+  title: String,
+  source: String,
+  id: String,
+  parts: [Part]
+}
+```
+### Part 
+```javascript
+{ 
+  text: String,
+  start: Number,
+  duration: Number
+}
+```

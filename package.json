@@ -1,6 +1,6 @@
 {
   "name": "subtitle-hero",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Read and manipulate subtitles",
   "main": "index.js",
   "scripts": {
