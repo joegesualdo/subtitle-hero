@@ -31,6 +31,26 @@ var req = https.get(youtubeXmlUrl, function(res) {
 });
 ```
 
+## API
+
+### convertXml(source, videoTitle, videoId, xml, callback)
+```javascript
+var SubtitleHero = require("subtitle-hero");
+
+SubtitleHero.convertXml("youtube", videoTitle, videoId, xml, function(err, result){
+  console.log(result)
+}) 
+```
+
+### .getWordContexts(subtitles, callback)
+```javascript
+var SubtitleHero = require("subtitle-hero");
+
+SubtitleHero.getWordContexts(result, function(err, contexts){
+  console.log(contexts)
+})
+```
+
 ## Data Structures
 ### Subtitle
 ```javascript
@@ -47,5 +67,15 @@ var req = https.get(youtubeXmlUrl, function(res) {
   text: String,      // "considered competitive in the the election"
   start: Number,     // 19.89
   duration: Number   // 5.69
+}
+```
+### Context 
+```javascript
+{ 
+  word: String,      // "ambiguous"
+  source: Number,    // "youtube" 
+  mediaId: Number,   // "DH5Dgc" 
+  start: Number,    // 345
+  duration: Number  // 8
 }
 ```

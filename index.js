@@ -3,7 +3,57 @@ var parser = new xml2js.Parser();
 
 var SubtitleHero = {
   convertXml: convertXml,
-  getYoutubeUrlOfPart: getYoutubeUrlOfPart
+  getYoutubeUrlOfPart: getYoutubeUrlOfPart,
+  getWordContexts: getWordContexts
+}
+
+function getWordContexts(subtitleObj, callback){
+  wordsObj = {}
+  var parts = subtitleObj.parts
+  for(var i = 0; i < parts.length;i++){
+    stringPart = stripSpecialCharacters(parts[i].text)
+
+    arr = stringPart.split(" ")
+    for(var x = 0; x < arr.length; x++){
+      var startIndex;
+      var endIndex;
+      var duration;
+      var dur;
+      var start;
+      if(i == 0){
+        startIndex = i
+      } else {
+        startIndex = i - 1
+      }
+      if(i == (parts.length - 1)){
+        endIndex = i
+      } else {
+        endIndex = i + 1
+      }
+      if(startIndex == (i - 1) && endIndex == (i + 1)){
+        duration = parseInt(parts[startIndex].duration) + parseInt(parts[endIndex].duration) + parseInt(parts[i].duration)
+      } else{
+        duration = parseInt(parts[startIndex].duration) + parseInt(parts[endIndex].duration)
+      }
+      var startTime = parseInt(parts[startIndex].start)
+
+      var wordContext = {
+        word: arr[x],
+        source: subtitleObj.source,
+        mediaId: subtitleObj.id,
+        start: startTime,
+        duration: duration
+      };
+
+      if(wordsObj[arr[x].toLowerCase()]){
+        wordsObj[arr[x].toLowerCase()]["contexts"].push(wordContext)
+      } else {
+        wordsObj[arr[x].toLowerCase()] = {"contexts": []}
+        wordsObj[arr[x].toLowerCase()]["contexts"].push(wordContext)
+      }
+    }
+  };
+  callback(null,wordsObj)
 }
 
 function convertXml(source, title, id, xml, callback){
@@ -64,6 +114,36 @@ function convertYoutubeXmlToJSON(title, id, xml, callback){
 
 function getYoutubeUrlOfPart(id, part){
   return "https://www.youtube.com/v/"+ id + "?start="+part["start"]+"&end="+(part["start"]+part["duration"]) +"&version=3"
+}
+
+function stripSpecialCharacters(string){
+  stringPart = string.replace( /([^\x00-\xFF]|\s)*$/g, '' )
+  stringPart = stringPart.replace(/&.*;/, '')
+  stringPart = stringPart.replace(/\\"/g, '"')
+  // Remove newlines (\n)
+  stringPart = stringPart.replace(/\r?\n|\r/g, " ")
+  // Remove commas
+  stringPart = stringPart.replace(/,/g, '')
+  // Remove periods 
+  stringPart = stringPart.replace(/\./g, '')
+  // Remove colons 
+  stringPart = stringPart.replace(/:/g, '')
+  // Remove semi-colons 
+  stringPart = stringPart.replace(/;/g, '')
+  // Remove weird double quotes 
+  stringPart = stringPart.replace(/“/g,'')
+  stringPart = stringPart.replace(/”/g,'')
+  // Remove double quotes 
+  stringPart = stringPart.replace(/"/g,'')
+  // Remove single quotes 
+  stringPart = stringPart.replace(/'/g,'')
+  // Remove apostrophe 
+  stringPart = stringPart.replace(/’/g,'')
+  // Remove question mark 
+  stringPart = stringPart.replace(/\?/g,'')
+  // Remove ! 
+  stringPart = stringPart.replace(/!/g,'')
+  return stringPart;
 }
 
 module.exports = SubtitleHero
