@@ -12,9 +12,10 @@ var https = require('https')
 var UriHero = require("uri-hero")
 var SubtitleHero = require("./index.js");
 
+// Add values to these variables
 youtubeXmlUrl = ""
 videoId = ""
-videoTitle
+videoTitle = ""
 
 var req = https.get(youtubeXmlUrl, function(res) {
   var youtubeXml = '';
