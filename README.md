@@ -10,7 +10,7 @@ $ npm install --save subtitle-hero
 ```javascript
 var https = require('https')
 var UriHero = require("uri-hero")
-var SubtitleHero = require("./index.js");
+var SubtitleHero = require("subtitle-hero");
 
 // Add values to these variables
 youtubeXmlUrl = ""
