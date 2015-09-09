@@ -35,17 +35,17 @@ var req = https.get(youtubeXmlUrl, function(res) {
 ### Subtitle
 ```javascript
 { 
-  title: String,
-  source: String,
-  id: String,
+  title: String,  // "Donald Trump Interview"
+  source: String, // "youtube"
+  id: String,     // "tOAY8waCglg"
   parts: [Part]
 }
 ```
 ### Part 
 ```javascript
 { 
-  text: String,
-  start: Number,
-  duration: Number
+  text: String,      // "considered competitive in the the election"
+  start: Number,     // 19.89
+  duration: Number   // 5.69
 }
 ```
