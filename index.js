@@ -1,10 +1,13 @@
 var xml2js = require('xml2js');
 var parser = new xml2js.Parser();
+var srtParser = require('srt-stream-parser');
+var striptags = require('striptags');
 
 var SubtitleHero = {
   convertXml: convertXml,
   getYoutubeUrlOfPart: getYoutubeUrlOfPart,
-  getWordContexts: getWordContexts
+  getWordContexts: getWordContexts,
+  convertSRT: convertSRT
 }
 
 function getWordContexts(subtitleObj, callback){
@@ -15,27 +18,39 @@ function getWordContexts(subtitleObj, callback){
 
     arr = stringPart.split(" ")
     for(var x = 0; x < arr.length; x++){
+      // seconds before and after the current text
+      buffer_length = 5;
       var startIndex;
       var endIndex;
       var duration;
       var dur;
       var start;
-      if(i == 0){
-        startIndex = i
+      // Since there are pauses int he movie with no talking, the srt isn't counting that in duration. So we should make duation before our target text fixed (ie 5 seconds before and after)
+      // if(i == 0){
+      //   startIndex = i
+      // } else {
+      //   startIndex = i - 1
+      // }
+      if ((parts[i].start - buffer_length) >= 0){
+        startTime = parts[i].start - buffer_length
+        // This adds a buffer to the beginning and end
+        duration = parts[i].duration + buffer_length + buffer_length
       } else {
-        startIndex = i - 1
+        startTime = parts[i].start
+        // This adds a buffer to the end
+        duration = parts[i].duration + buffer_length
       }
-      if(i == (parts.length - 1)){
-        endIndex = i
-      } else {
-        endIndex = i + 1
-      }
-      if(startIndex == (i - 1) && endIndex == (i + 1)){
-        duration = parseInt(parts[startIndex].duration) + parseInt(parts[endIndex].duration) + parseInt(parts[i].duration)
-      } else{
-        duration = parseInt(parts[startIndex].duration) + parseInt(parts[endIndex].duration)
-      }
-      var startTime = parseInt(parts[startIndex].start)
+      // if(i == (parts.length - 1)){
+      //   endIndex = i
+      // } else {
+      //   endIndex = i + 1
+      // }
+      // if(startIndex == (i - 1) && endIndex == (i + 1)){
+      //   duration = parts[startIndex].duration + parts[endIndex].duration + parts[i].duration
+      // } else{
+      //   duration = parts[startIndex].duration + parts[endIndex].duration
+      // }
+      // var startTime = parts[startIndex].start
 
       var wordContext = {
         word: arr[x],
@@ -54,6 +69,26 @@ function getWordContexts(subtitleObj, callback){
     }
   };
   callback(null,wordsObj)
+}
+
+function convertSRT(title, srt_file, callback){
+  var subtitles = {
+    title: title,
+    parts: []
+  };
+  srt_file.pipe(srtParser()).on('data', function(data) {
+      var data = JSON.parse(data);
+      // subtitles.push(data);
+      part = {
+        start: (data.start/1000),
+        duration: ((data.end - data.start)/1000),
+        text: striptags(stripSpecialCharacters(data.dialogs.join(" ")))
+      }
+      subtitles.parts.push(part)
+  }).on('end', function () {
+    // console.log(subtitles)
+    callback(null, subtitles)
+  });
 }
 
 function convertXml(source, title, id, xml, callback){

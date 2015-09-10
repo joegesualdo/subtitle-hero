@@ -1,6 +1,6 @@
 {
   "name": "subtitle-hero",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Read and manipulate subtitles",
   "main": "index.js",
   "scripts": {
@@ -10,6 +10,7 @@
   "license": "MIT",
   "dependencies": {
     "https": "^1.0.0",
+    "striptags": "^2.0.3",
     "uri-hero": "0.0.1",
     "xml2js": "^0.4.12"
   }

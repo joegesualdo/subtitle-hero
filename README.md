@@ -33,7 +33,16 @@ var req = https.get(youtubeXmlUrl, function(res) {
 
 ## API
 
-### convertXml(source, videoTitle, videoId, xml, callback)
+### .convertSRT(title, srtFile, callback)
+```javascript
+var SubtitleHero = require("subtitle-hero");
+
+SubtitleHero.convertSRT("Deep Impact", srtFile, function(err, result){
+  console.log(result)
+}) 
+```
+
+### .convertXml(source, videoTitle, videoId, xml, callback)
 ```javascript
 var SubtitleHero = require("subtitle-hero");
 
