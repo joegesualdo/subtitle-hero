@@ -25,12 +25,6 @@ function getWordContexts(subtitleObj, callback){
       var duration;
       var dur;
       var start;
-      // Since there are pauses int he movie with no talking, the srt isn't counting that in duration. So we should make duation before our target text fixed (ie 5 seconds before and after)
-      // if(i == 0){
-      //   startIndex = i
-      // } else {
-      //   startIndex = i - 1
-      // }
       if ((parts[i].start - buffer_length) >= 0){
         startTime = parts[i].start - buffer_length
         // This adds a buffer to the beginning and end
@@ -40,17 +34,6 @@ function getWordContexts(subtitleObj, callback){
         // This adds a buffer to the end
         duration = parts[i].duration + buffer_length
       }
-      // if(i == (parts.length - 1)){
-      //   endIndex = i
-      // } else {
-      //   endIndex = i + 1
-      // }
-      // if(startIndex == (i - 1) && endIndex == (i + 1)){
-      //   duration = parts[startIndex].duration + parts[endIndex].duration + parts[i].duration
-      // } else{
-      //   duration = parts[startIndex].duration + parts[endIndex].duration
-      // }
-      // var startTime = parts[startIndex].start
 
       var wordContext = {
         word: arr[x].toLowerCase(),
