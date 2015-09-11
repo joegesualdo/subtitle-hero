@@ -53,7 +53,7 @@ function getWordContexts(subtitleObj, callback){
       // var startTime = parts[startIndex].start
 
       var wordContext = {
-        word: arr[x],
+        word: arr[x].toLowerCase(),
         source: subtitleObj.source,
         mediaId: subtitleObj.id,
         start: startTime,
