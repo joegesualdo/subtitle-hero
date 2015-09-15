@@ -1,6 +1,6 @@
 {
   "name": "subtitle-hero",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "Read and manipulate subtitles",
   "main": "index.js",
   "scripts": {
@@ -9,6 +9,7 @@
   "author": "Joe Gesualdo",
   "license": "MIT",
   "dependencies": {
+    "common-english-words": "0.0.6",
     "https": "^1.0.0",
     "striptags": "^2.0.3",
     "uri-hero": "0.0.1",

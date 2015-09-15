@@ -2,6 +2,7 @@ var xml2js = require('xml2js');
 var parser = new xml2js.Parser();
 var srtParser = require('srt-stream-parser');
 var striptags = require('striptags');
+var CommonWords = require('common-english-words')
 
 var SubtitleHero = {
   convertXml: convertXml,
@@ -10,48 +11,55 @@ var SubtitleHero = {
   convertSRT: convertSRT
 }
 
-function getWordContexts(subtitleObj, callback){
-  wordsObj = {}
-  var parts = subtitleObj.parts
-  for(var i = 0; i < parts.length;i++){
-    stringPart = stripSpecialCharacters(parts[i].text)
+function getWordContexts(subtitleObj, excludeCommonWords, callback){
+  CommonWords.getWords(function(err, commonWords){
+    wordsObj = {}
+    var parts = subtitleObj.parts
+    for(var i = 0; i < parts.length;i++){
+      stringPart = stripSpecialCharacters(parts[i].text)
 
-    arr = stringPart.split(" ")
-    for(var x = 0; x < arr.length; x++){
-      // seconds before and after the current text
-      buffer_length = 5;
-      var startIndex;
-      var endIndex;
-      var duration;
-      var dur;
-      var start;
-      if ((parts[i].start - buffer_length) >= 0){
-        startTime = parts[i].start - buffer_length
-        // This adds a buffer to the beginning and end
-        duration = parts[i].duration + buffer_length + buffer_length
-      } else {
-        startTime = parts[i].start
-        // This adds a buffer to the end
-        duration = parts[i].duration + buffer_length
+      arr = stringPart.split(" ")
+      for(var x = 0; x < arr.length; x++){
+        if(excludeCommonWords){
+          if(commonWords.indexOf(arr[x].toLowerCase()) > -1){
+            continue;
+          }
+        }
+        // seconds before and after the current text
+        buffer_length = 5;
+        var startIndex;
+        var endIndex;
+        var duration;
+        var dur;
+        var start;
+        if ((parts[i].start - buffer_length) >= 0){
+          startTime = parts[i].start - buffer_length
+          // This adds a buffer to the beginning and end
+          duration = parts[i].duration + buffer_length + buffer_length
+        } else {
+          startTime = parts[i].start
+          // This adds a buffer to the end
+          duration = parts[i].duration + buffer_length
+        }
+
+        var wordContext = {
+          word: arr[x].toLowerCase(),
+          source: subtitleObj.source,
+          mediaId: subtitleObj.id,
+          start: startTime,
+          duration: duration
+        };
+
+        if(wordsObj[arr[x].toLowerCase()]){
+          wordsObj[arr[x].toLowerCase()]["contexts"].push(wordContext)
+        } else {
+          wordsObj[arr[x].toLowerCase()] = {"contexts": []}
+          wordsObj[arr[x].toLowerCase()]["contexts"].push(wordContext)
+        }
       }
-
-      var wordContext = {
-        word: arr[x].toLowerCase(),
-        source: subtitleObj.source,
-        mediaId: subtitleObj.id,
-        start: startTime,
-        duration: duration
-      };
-
-      if(wordsObj[arr[x].toLowerCase()]){
-        wordsObj[arr[x].toLowerCase()]["contexts"].push(wordContext)
-      } else {
-        wordsObj[arr[x].toLowerCase()] = {"contexts": []}
-        wordsObj[arr[x].toLowerCase()]["contexts"].push(wordContext)
-      }
-    }
-  };
-  callback(null,wordsObj)
+    };
+    callback(null,wordsObj)
+  });
 }
 
 function convertSRT(title, srt_file, callback){
