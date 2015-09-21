@@ -9,8 +9,10 @@
   "author": "Joe Gesualdo",
   "license": "MIT",
   "dependencies": {
+    "async": "^1.4.2",
     "common-english-words": "0.0.6",
     "https": "^1.0.0",
+    "merge": "^1.2.0",
     "striptags": "^2.0.3",
     "uri-hero": "0.0.1",
     "xml2js": "^0.4.12"
