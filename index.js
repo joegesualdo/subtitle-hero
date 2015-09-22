@@ -5,6 +5,7 @@ var striptags = require('striptags');
 var CommonWords = require('common-english-words')
 var fs = require('fs')
 var async = require('async')
+var path = require('path')
 
 var SubtitleHero = {
   convertXml: convertXml,
@@ -75,24 +76,38 @@ function getWordContexts(subtitleObjects, excludeCommonWords, callback){
   });
 }
 
-function convertSRT(title, srtFilePath, callback){
-  var srt_file = fs.createReadStream(srtFilePath);
-  var subtitles = {
-    source: title,
-    parts: []
-  };
-  srt_file.pipe(srtParser()).on('data', function(data) {
-      var data = JSON.parse(data);
-      // subtitles.push(data);
-      part = {
-        start: (data.start/1000),
-        duration: ((data.end - data.start)/1000),
-        text: striptags(stripSpecialCharacters(data.dialogs.join(" ")))
+function convertSRT(srtFilePaths, callback){
+  subtitlesArray = []
+  async.each(srtFilePaths, function(srtFilePath, callback) {
+    var srt_file = fs.createReadStream(srtFilePath);
+    var subtitles = {
+      // Name the subtitle by the name of the srt file
+      source: path.basename(srtFilePath, path.extname(srtFilePath)),
+      parts: []
+    };
+    srt_file.pipe(srtParser()).on('data', function(data) {
+        var data = JSON.parse(data);
+        // subtitles.push(data);
+        part = {
+          start: (data.start/1000),
+          duration: ((data.end - data.start)/1000),
+          text: striptags(stripSpecialCharacters(data.dialogs.join(" ")))
+        }
+        subtitles.parts.push(part)
+    }).on('end', function () {
+      // console.log(subtitles)
+      subtitlesArray.push(subtitles)
+      callback()
+    });
+  }, function(err){
+      // if any of the file processing produced an error, err would equal that error
+      if( err ) {
+        // One of the iterations produced an error.
+        // All processing will now stop.
+        console.log('A subtitle failed to process');
+      } else {
+        callback(null, subtitlesArray)
       }
-      subtitles.parts.push(part)
-  }).on('end', function () {
-    // console.log(subtitles)
-    callback(null, subtitles)
   });
 }
 
