@@ -11,9 +11,17 @@
   "dependencies": {
     "async": "^1.4.2",
     "common-english-words": "0.0.6",
+    "directory-hero": "0.0.2",
+    "fluent-ffmpeg": "^2.0.1",
     "https": "^1.0.0",
+    "inflection": "^1.7.1",
     "merge": "^1.2.0",
+    "mkdirp": "^0.5.1",
+    "natural": "^0.2.1",
+    "sanitize-filename": "^1.4.3",
+    "sat-words": "0.0.2",
     "striptags": "^2.0.3",
+    "sync-exec": "^0.6.2",
     "uri-hero": "0.0.1",
     "xml2js": "^0.4.12"
   }

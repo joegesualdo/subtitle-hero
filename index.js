@@ -14,7 +14,10 @@ var SubtitleHero = {
   convertSRT: convertSRT
 }
 
-function getWordContexts(subtitleObjects, excludeCommonWords, callback){
+//If requestedWords is empty, then get all words
+// What if requestedWords are capitalized?
+// requestedWords is super slow, because we need to keep finding the indexOf
+function getWordContexts(subtitleObjects, excludeCommonWords, requestedWords, callback){
   wordsObj = {}
   async.each(subtitleObjects, function(subtitleObj, callback) {
     CommonWords.getWords(function(err, commonWords){
@@ -54,12 +57,25 @@ function getWordContexts(subtitleObjects, excludeCommonWords, callback){
             duration: duration
           };
 
-          if(wordsObj[arr[x].toLowerCase()]){
-            wordsObj[arr[x].toLowerCase()]["contexts"].push(wordContext)
+          if (requestedWords && requestedWords.length > 0){
+            if(requestedWords.indexOf(arr[x].toLowerCase()) > -1){
+              if(wordsObj[arr[x].toLowerCase()]){
+                wordsObj[arr[x].toLowerCase()]["contexts"].push(wordContext)
+              } else {
+                wordsObj[arr[x].toLowerCase()] = {"contexts": []}
+                wordsObj[arr[x].toLowerCase()]["contexts"].push(wordContext)
+              }
+            }
           } else {
-            wordsObj[arr[x].toLowerCase()] = {"contexts": []}
-            wordsObj[arr[x].toLowerCase()]["contexts"].push(wordContext)
+            if(wordsObj[arr[x].toLowerCase()]){
+              wordsObj[arr[x].toLowerCase()]["contexts"].push(wordContext)
+            } else {
+              wordsObj[arr[x].toLowerCase()] = {"contexts": []}
+              wordsObj[arr[x].toLowerCase()]["contexts"].push(wordContext)
+            }
+
           }
+
         }
       };
       callback()
@@ -198,6 +214,14 @@ function stripSpecialCharacters(string){
   stringPart = stringPart.replace(/\?/g,'')
   // Remove ! 
   stringPart = stringPart.replace(/!/g,'')
+  // Remove & 
+  stringPart = stringPart.replace(/&/g,'')
+  // Remove $ 
+  stringPart = stringPart.replace(/\$/g,'')
+  // Remove [ 
+  stringPart = stringPart.replace(/\[/g,'')
+  // Remove ] 
+  stringPart = stringPart.replace(/\]/g,'')
   return stringPart;
 }
 

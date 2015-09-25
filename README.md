@@ -51,7 +51,7 @@ SubtitleHero.convertXml("youtube", videoTitle, videoId, xml, function(err, resul
 }) 
 ```
 
-### .getWordContexts(arrayOfSubtitleObjects, excludeCommonWords, callback)
+### .getWordContexts(arrayOfSubtitleObjects, excludeCommonWords, requestedWords, callback)
 ```javascript
 var SubtitleHero = require("subtitle-hero");
 
