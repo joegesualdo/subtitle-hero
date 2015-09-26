@@ -51,7 +51,14 @@ SubtitleHero.convertXml("youtube", videoTitle, videoId, xml, function(err, resul
 }) 
 ```
 
-### .getWordContexts(arrayOfSubtitleObjects, excludeCommonWords, requestedWords, callback)
+### .getWordContexts(options, callback)
+
+The available options are:
+
+- `subtitles` - subtitle objects
+- `excludeCommonWords` - (boolean) true if you don't want to include common english words
+- `requestedWords` - (array) an array of words you want the context for
+
 ```javascript
 var SubtitleHero = require("subtitle-hero");
 

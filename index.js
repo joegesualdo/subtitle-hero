@@ -17,7 +17,14 @@ var SubtitleHero = {
 //If requestedWords is empty, then get all words
 // What if requestedWords are capitalized?
 // requestedWords is super slow, because we need to keep finding the indexOf
-function getWordContexts(subtitleObjects, excludeCommonWords, requestedWords, callback){
+function getWordContexts(options, callback){
+  var options = options || {};
+  var subtitleObjects = options.subtitles || null
+  if(subtitleObjects == null){
+    throw new Error("Must provide subtitles") 
+  }
+  var excludeCommonWords = options.excludeCommonWords || false
+  var requestedWords = options.requestedWords || [] 
   wordsObj = {}
   async.each(subtitleObjects, function(subtitleObj, callback) {
     CommonWords.getWords(function(err, commonWords){
