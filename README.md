@@ -62,7 +62,7 @@ The available options are:
 ```javascript
 var SubtitleHero = require("subtitle-hero");
 
-SubtitleHero.getWordContexts(subtitles, true, [ ],function(err, contexts){
+SubtitleHero.getWordContexts({subtitles: subtitles, excludeCommonWords: true, requestedWords: []}, function(err, contexts){
   console.log(contexts)
 })
 ```
