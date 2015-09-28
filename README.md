@@ -35,7 +35,14 @@ var req = https.get(youtubeXmlUrl, function(res) {
 
 ## API
 
-### .convertSRT(srtFilePathsArray, srtFile, callback)
+### `convertSRT(srtFilePaths, callback)`
+
+| Name | Type | Description |
+|------|------|-------------|
+| srtFilePaths | `Array` | A collection of srt files paths to evaluate |
+
+Returns: `Array`, of subtitle Objects.
+
 ```javascript
 var SubtitleHero = require("subtitle-hero");
 
@@ -44,7 +51,14 @@ SubtitleHero.convertSRT(srtFilePaths, function(err, result){
 }) 
 ```
 
-### .convertXml(source, videoTitle, videoId, xml, callback)
+### `convertXml(source, videoTitle, videoId, xml, callback)`
+
+| Name | Type | Description |
+|------|------|-------------|
+| source | `String` | A string representing the source (or formatting type) of the XML |
+
+Returns: `Object`, subtitle Object.
+
 ```javascript
 var SubtitleHero = require("subtitle-hero");
 
@@ -53,7 +67,11 @@ SubtitleHero.convertXml("youtube", videoTitle, videoId, xml, function(err, resul
 }) 
 ```
 
-### .getWordContexts(options, callback)
+### `getWordContexts(options, callback)`
+
+| Name | Type | Description |
+|------|------|-------------|
+| options | `Object` | Object that can include the options below |
 
 The available options are:
 
