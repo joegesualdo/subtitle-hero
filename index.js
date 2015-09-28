@@ -25,6 +25,7 @@ function getWordContexts(options, callback){
   }
   var excludeCommonWords = options.excludeCommonWords || false
   var requestedWords = options.requestedWords || [] 
+  var buffer_length = options.buffer || 5 
   wordsObj = {}
   async.each(subtitleObjects, function(subtitleObj, callback) {
     CommonWords.getWords(function(err, commonWords){
@@ -40,7 +41,6 @@ function getWordContexts(options, callback){
             }
           }
           // seconds before and after the current text
-          buffer_length = 5;
           var startIndex;
           var endIndex;
           var duration;

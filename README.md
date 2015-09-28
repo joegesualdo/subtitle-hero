@@ -78,6 +78,7 @@ The available options are:
 - `subtitles` - (subtitle) subtitle objects
 - `excludeCommonWords` - (boolean) true if you don't want to include common english words
 - `requestedWords` - (array) an array of words you want the context for
+- `buffer` - (Number) number that represents the seconds before and after context 
 
 ```javascript
 var SubtitleHero = require("subtitle-hero");
