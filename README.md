@@ -25,7 +25,9 @@ var req = https.get(youtubeXmlUrl, function(res) {
 
   res.on('end', function() {
     SubtitleHero.convertXml("youtube", videoTitle, videoId, youtubeXml, function(err, result){
-      console.log(result)
+      SubtitleHero.getWordContexts({subtitles: [result], excludeCommonWords: true, requestedWords: []}, function(err, contexts){
+        console.log(contexts)
+      })
     }) 
   });
 });
