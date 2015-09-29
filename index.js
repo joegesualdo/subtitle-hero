@@ -6,12 +6,114 @@ var CommonWords = require('common-english-words')
 var fs = require('fs')
 var async = require('async')
 var path = require('path')
+var indexOfArraySequence = require('index-of-array-sequence')
 
 var SubtitleHero = {
   convertXml: convertXml,
   getYoutubeUrlOfPart: getYoutubeUrlOfPart,
   getWordContexts: getWordContexts,
-  convertSRT: convertSRT
+  convertSRT: convertSRT,
+  getQuoteContexts: getQuoteContexts
+}
+
+// TODO: Clean this method after writing tests for it
+function getQuoteContexts(options, callback){
+  var options = options || {};
+  var subtitleObjects = options.subtitles || null
+  var quotes = options.quotes || null
+  if(subtitleObjects == null){
+    throw new Error("Must provide subtitles") 
+  }
+  if(quotes == null || quotes == []){
+    throw new Error("Must provide quote") 
+  }
+  var excludeCommonWords = options.excludeCommonWords || false
+  var buffer_length = options.buffer || 5 
+
+  wordsObj = {}
+  async.each(subtitleObjects, function(subtitleObj, callback) {
+      var parts = subtitleObj.parts
+      for(var i = 0; i < parts.length;i++){
+        // adds the part before and after
+        for(var quoteIndex = 0; quoteIndex < quotes.length; quoteIndex++){
+          var quote = quotes[quoteIndex]
+          var quoteArray = quote.split(" ")
+
+          // If quote occurs in current part, then skip to the processing
+          if(indexOfArraySequence(quoteArray, stripSpecialCharacters(parts[i].text).split(" ")) > -1){
+            stringParts = stripSpecialCharacters(parts[i].text)
+          // If quote occurs in part preceeding the current part, then we already processed it, so we don't want to do anything but get out of the current loop 
+          } else if (parts[i-1] && indexOfArraySequence(quoteArray, stripSpecialCharacters(parts[i-1].text).split(" ")) > -1){
+            // break
+            continue
+          // If quote occurs in part succeeding the current part, then we will process it on the next iteration , so we don't want to do anything but get out of the current loop 
+          } else if (parts[i+1] && indexOfArraySequence(quoteArray, stripSpecialCharacters(parts[i+1].text).split(" ")) > -1){
+            // break
+            continue
+            // this will check if a quote occurs over more than one part
+          } else {
+            if (!parts[i-1] && parts[i] && parts[i+1]){
+              stringParts = stripSpecialCharacters(parts[i].text) + " " +stripSpecialCharacters(parts[i+1].text)
+            } else if (parts[i-1] && parts[i] && !parts[i+1]){
+              stringParts = stripSpecialCharacters(parts[i-1].text) + " " + stripSpecialCharacters(parts[i].text)
+            // } else if (parts[i-1] == "undefined" && parts[i] != "undefined" && parts[i+1] == "undefined"){
+            } else if (!parts[i-1] && parts[i]  && !parts[i+1]){
+              stringParts = stripSpecialCharacters(parts[i].text)
+            } else{
+              stringParts = stripSpecialCharacters(parts[i-1].text) + " " + stripSpecialCharacters(parts[i].text) + " " + stripSpecialCharacters(parts[i+1].text)
+            }
+          }
+
+          arr = stringParts.split(" ")
+          arraySequenceIndex = indexOfArraySequence(quoteArray, arr)
+          if(arraySequenceIndex > -1){
+
+            // seconds before and after the current text
+            var startIndex;
+            var endIndex;
+            var duration;
+            var dur;
+            var start;
+            if ((parts[i].start - buffer_length) >= 0){
+              startTime = parts[i].start - buffer_length
+              // This adds a buffer to the beginning and end
+              duration = parts[i].duration + buffer_length + buffer_length
+            } else {
+              startTime = parts[i].start
+              // This adds a buffer to the end
+              duration = parts[i].duration + buffer_length
+            }
+
+            var wordContext = {
+              quote: quote.toLowerCase(),
+              source: subtitleObj.source,
+              mediaId: subtitleObj.id,
+              start: startTime,
+              duration: duration
+            };
+
+            if(wordsObj[quote.toLowerCase()]){
+              wordsObj[quote.toLowerCase()]["contexts"].push(wordContext)
+            } else {
+              wordsObj[quote.toLowerCase()] = {"contexts": []}
+              wordsObj[quote.toLowerCase()]["contexts"].push(wordContext)
+            }
+          } else {
+            continue
+          }
+        };
+      }
+      callback()
+  }, function(err){
+      // if any of the file processing produced an error, err would equal that error
+      if( err ) {
+        // One of the iterations produced an error.
+        // All processing will now stop.
+        console.log('A subtitleObject failed to process');
+      } else {
+        callback(null, wordsObj)
+      }
+  });
 }
 
 //If requestedWords is empty, then get all words

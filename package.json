@@ -1,6 +1,6 @@
 {
   "name": "subtitle-hero",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Read and manipulate subtitles",
   "main": "index.js",
   "scripts": {
@@ -14,6 +14,7 @@
     "directory-hero": "0.0.2",
     "fluent-ffmpeg": "^2.0.1",
     "https": "^1.0.0",
+    "index-of-array-sequence": "0.0.2",
     "inflection": "^1.7.1",
     "merge": "^1.2.0",
     "mkdirp": "^0.5.1",

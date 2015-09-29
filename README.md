@@ -88,6 +88,26 @@ SubtitleHero.getWordContexts({subtitles: subtitles, excludeCommonWords: true, re
 })
 ```
 
+### `getQuoteContexts(options, callback)`
+
+| Name | Type | Description |
+|------|------|-------------|
+| options | `Object` | Object that can include the options below |
+
+The available options are:
+
+- `subtitles` - (subtitle) subtitle objects
+- `quotes` - (Array) An array of the quotes you want to search for 
+- `buffer` - (Number) number that represents the seconds before and after context 
+
+```javascript
+var SubtitleHero = require("subtitle-hero");
+
+SubtitleHero.getQuoteContexts({subtitles: subtitles, quotes: ["canary in a coal mine"]}, function(err, contexts){
+  console.log(contexts)
+})
+```
+
 ## Data Structures
 ### Subtitle
 ```javascript
