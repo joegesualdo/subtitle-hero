@@ -35,7 +35,7 @@ var req = https.get(youtubeXmlUrl, function(res) {
 
 ## API
 
-### `convertSRT(srtFilePaths, callback)`
+### `convertSRT(srtFilePaths, stepCallback, finishedCallback)`
 
 | Name | Type | Description |
 |------|------|-------------|
@@ -46,8 +46,10 @@ Returns: `Array`, of subtitle Objects.
 ```javascript
 var SubtitleHero = require("subtitle-hero");
 
-SubtitleHero.convertSRT(srtFilePaths, function(err, result){
-  console.log(result)
+SubtitleHero.convertSRT(srtFilePaths, function(subtitle){
+  console.log(subtitle)
+}, function(){
+  console.log("finished")
 }) 
 ```
 

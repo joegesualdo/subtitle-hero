@@ -129,7 +129,7 @@ function getWordContexts(options, callback){
   var requestedWords = options.requestedWords || [] 
   var buffer_length = options.buffer || 5 
   wordsObj = {}
-  async.each(subtitleObjects, function(subtitleObj, callback) {
+  async.eachSeries(subtitleObjects, function(subtitleObj, callback) {
     CommonWords.getWords(function(err, commonWords){
       var parts = subtitleObj.parts
       for(var i = 0; i < parts.length;i++){
@@ -201,15 +201,16 @@ function getWordContexts(options, callback){
   });
 }
 
-function convertSRT(srtFilePaths, callback){
+function convertSRT(srtFilePaths, stepCallback, finishedCallback){
   subtitlesArray = []
-  async.each(srtFilePaths, function(srtFilePath, callback) {
+  async.eachSeries(srtFilePaths, function(srtFilePath, callback) {
     var srt_file = fs.createReadStream(srtFilePath);
     var subtitles = {
       // Name the subtitle by the name of the srt file
       source: path.basename(srtFilePath, path.extname(srtFilePath)),
       parts: []
     };
+    // console.log("about to read")
     srt_file.pipe(srtParser()).on('data', function(data) {
         var data = JSON.parse(data);
         // subtitles.push(data);
@@ -219,9 +220,10 @@ function convertSRT(srtFilePaths, callback){
           text: striptags(stripSpecialCharacters(data.dialogs.join(" ")))
         }
         subtitles.parts.push(part)
-    }).on('end', function () {
+    }).on('end', function (){
       // console.log(subtitles)
-      subtitlesArray.push(subtitles)
+      // subtitlesArray.push(subtitles)
+      stepCallback(subtitles)
       callback()
     });
   }, function(err){
@@ -231,7 +233,7 @@ function convertSRT(srtFilePaths, callback){
         // All processing will now stop.
         console.log('A subtitle failed to process');
       } else {
-        callback(null, subtitlesArray)
+        finishedCallback(null)
       }
   });
 }
