@@ -168,7 +168,7 @@ function getWordContexts(options, callback){
 
           if (requestedWords && requestedWords.length > 0){
             if(requestedWords.indexOf(arr[x].toLowerCase()) > -1){
-              if(wordsObj[arr[x].toLowerCase()]){
+              if(wordsObj[arr[x].toLowerCase()] && wordsObj[arr[x].toLowerCase()]["contexts"]){
                 wordsObj[arr[x].toLowerCase()]["contexts"].push(wordContext)
               } else {
                 wordsObj[arr[x].toLowerCase()] = {"contexts": []}
@@ -176,7 +176,7 @@ function getWordContexts(options, callback){
               }
             }
           } else {
-            if(wordsObj[arr[x].toLowerCase()]){
+            if(wordsObj[arr[x].toLowerCase()] && wordsObj[arr[x].toLowerCase()]["contexts"]){
               wordsObj[arr[x].toLowerCase()]["contexts"].push(wordContext)
             } else {
               wordsObj[arr[x].toLowerCase()] = {"contexts": []}

@@ -6,33 +6,6 @@
 $ npm install --save subtitle-hero
 ```
 
-## Usage
-```javascript
-var https = require('https')
-var UriHero = require("uri-hero")
-var SubtitleHero = require("subtitle-hero");
-
-// Add values to these variables
-youtubeXmlUrl = ""
-videoId = ""
-videoTitle = ""
-
-var req = https.get(youtubeXmlUrl, function(res) {
-  var youtubeXml = '';
-  res.on('data', function(chunk) {
-    youtubeXml += chunk;
-  });
-
-  res.on('end', function() {
-    SubtitleHero.convertXml("youtube", videoTitle, videoId, youtubeXml, function(err, result){
-      SubtitleHero.getWordContexts({subtitles: [result], excludeCommonWords: true, requestedWords: []}, function(err, contexts){
-        console.log(contexts)
-      })
-    }) 
-  });
-});
-```
-
 ## API
 
 ### `convertSRT(srtFilePaths, stepCallback, finishedCallback)`
